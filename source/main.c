@@ -13,11 +13,27 @@
 #include <falso_ndk/FalsoNDK.h>
 #endif
 
-int _newlib_heap_size_user = 256 * 1024 * 1024;
+int _newlib_heap_size_user = 200 * 1024 * 1024;
 
 #ifdef USE_SCELIBC_IO
 int sceLibcHeapSize = 4 * 1024 * 1024;
 #endif
+
+#define SCREEN_WIDTH 960
+#define SCREEN_HEIGHT 544
+#define JNI_STR(str) jni->NewStringUTF(&jni, str)
+#define MAIN_JNI_FUNC_2_DECL(name, ...) \
+    int (*name)(void *env, void *obj, ##__VA_ARGS__)
+#define MAIN_JNI_FUNC_1_DECL(name, ...) \
+    int (*name)(void *env)
+#define MAIN_JNI_FUNC_0_DECL(name, ...) \
+    int (*name)(void)
+#define MAIN_JNI_FUNC_2(name, ...) \
+    int (*name)(void *env, void *obj, ##__VA_ARGS__) = (void *)so_symbol(&so_mod, #name)
+#define MAIN_JNI_FUNC_1(name, ...) \
+    int (*name)(void *env) = (void *)so_symbol(&so_mod, #name)
+#define MAIN_JNI_FUNC_0(name, ...) \
+    int (*name)() = (void *)so_symbol(&so_mod, #name)
 
 so_module so_mod;
 
@@ -30,6 +46,9 @@ int main() {
     } else {
         l_warn("JNI_OnLoad was not found in the .so. Check naming of the function.");
     }
+
+    MAIN_JNI_FUNC_0(Java_com_foursakenmedia_OriginJNIFunctions_originStart);
+    Java_com_foursakenmedia_OriginJNIFunctions_originStart();
 
     gl_init();
 

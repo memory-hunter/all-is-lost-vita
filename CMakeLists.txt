@@ -11,23 +11,23 @@ project(so_loader C CXX)
 include("${VITASDK}/share/vita.cmake" REQUIRED)
 
 # Vita application configuration
-set(VITA_APP_NAME "so-loader")
-set(VITA_TITLEID "SLDR00000")
-set(VITA_VPKNAME "so_loader")
+set(VITA_APP_NAME "All is Lost")
+set(VITA_TITLEID "AILO69420")
+set(VITA_VPKNAME "ail")
 set(VITA_VERSION "01.00")
 set(VITA_MKSFOEX_FLAGS "-d ATTRIBUTE2=12")
 
 # Optional: used for "send" and "dump" targets
-set(PSVITAIP "192.168.0.198" CACHE STRING "PSVita IP (for FTP access)")
+set(PSVITAIP "192.168.178.58" CACHE STRING "PSVita IP (for FTP access)")
 set(PARSECOREPATH "$ENV{PARSECOREPATH}" CACHE STRING "vita-parse-core main.py")
 
 # Game-specific definitions
-set(DATA_PATH "ux0:data/gamename/") # Path to data (with trailing /)
-set(SO_PATH "${DATA_PATH}main.so") # Path to .so
+set(DATA_PATH "ux0:data/ail/") # Path to data (with trailing /)
+set(SO_PATH "${DATA_PATH}liborigingame.so") # Path to .so
 add_definitions(-DDATA_PATH="${DATA_PATH}" -DSO_PATH="${SO_PATH}")
 
 # Port type
-option(NDK_PORT "This should be on if the game is done with Android NDK (has an android_main entry point)" OFF)
+option(NDK_PORT "This should be on if the game is done with Android NDK (has an android_main entry point)" ON)
 if (NDK_PORT)
   add_definitions(-DNDK_PORT)
 endif()
@@ -64,7 +64,7 @@ if (CMAKE_BUILD_TYPE STREQUAL "Debug")
   # Uncomment this for verbose FalsoJNI logging:
   #add_definitions(-DFALSOJNI_DEBUGLEVEL=0)
   # Uncomment this for OpenGL logging:
-  #add_definitions(-DDEBUG_OPENGL)
+  add_definitions(-DDEBUG_OPENGL)
   # Uncomment this for so_util logging:
   #add_definitions(-DSO_UTIL_VERBOSE=1)
   # Uncomment this for verbose FalsoNDK logging (separate things):
@@ -73,10 +73,10 @@ if (CMAKE_BUILD_TYPE STREQUAL "Debug")
   #add_definitions(-DDEBUG_PIPEFD=1)
   #add_definitions(-DDEBUG_CALLBACKS=1)
   # Space-separated flags passed to vitaGL
-  set(VITAGL_MAKE_FLAGS "SOFTFP_ABI=1 TEST=1 LOG_ERRORS=1")
+  set(VITAGL_MAKE_FLAGS "SOFTFP_ABI=1 TEST=1 LOG_ERRORS=1 HAVE_SHADER_CACHE=1 HAVE_DEBUGGER=1")
 else()
   # Space-separated flags passed to vitaGL
-  set(VITAGL_MAKE_FLAGS "SOFTFP_ABI=1 NO_DEBUG=1")
+  set(VITAGL_MAKE_FLAGS "SOFTFP_ABI=1 NO_DEBUG=1 HAVE_SHADER_CACHE=1")
 endif()
 
 # makes sincos, sincosf, etc. visible
@@ -84,6 +84,7 @@ add_definitions(-D_GNU_SOURCE -D__POSIX_VISIBLE=999999)
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wl,-q -mfloat-abi=softfp -std=gnu11 -Wno-deprecated")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wl,-q -mfloat-abi=softfp -std=gnu++20 -Wno-write-strings -Wno-psabi")
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,--defsym,__sce_headroom=0x1000")
 
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O1 -g3")
@@ -106,6 +107,7 @@ set(SOURCES
     source/reimpl/pthr.c
     source/reimpl/sys.c
     source/reimpl/time64.c
+    source/reimpl/entropy.c
     source/utils/dialog.c
     source/utils/glutil.c
     source/utils/init.c

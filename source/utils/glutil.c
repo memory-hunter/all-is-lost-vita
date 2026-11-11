@@ -18,6 +18,7 @@
 #include <string.h>
 #include <psp2/kernel/sysmem.h>
 #include <psp2/io/stat.h>
+#include <ctype.h>
 
 // Helpers for our handling of shaders
 GLboolean skip_next_compile = GL_FALSE;
@@ -36,6 +37,7 @@ void gl_preload() {
 }
 
 void gl_init() {
+    vglSetCircularPoolSize(3 * 25000000);
     vglInitExtended(0, 960, 544, 6 * 1024 * 1024, SCE_GXM_MULTISAMPLE_4X);
 }
 
@@ -45,7 +47,7 @@ void gl_swap() {
 
 void glShaderSource_soloader(GLuint shader, GLsizei count, const GLchar **string, const GLint *_length) {
 #ifdef DEBUG_OPENGL
-    sceClibPrintf("[gl_dbg] glShaderSource<%p>(shader: %i, count: %i, string: %p, length: %p)\n",
+    l_debug("[gl_dbg] glShaderSource<%p>(shader: %i, count: %i, string: %p, length: %p)\n",
                   __builtin_return_address(0), shader, count, string, _length);
 #endif
     if (!string) {
@@ -82,6 +84,31 @@ void glShaderSource_soloader(GLuint shader, GLsizei count, const GLchar **string
     }
     str[total_length] = '\0';
 
+    {
+        int count_row = 0;
+        for (char *p = str; (p = strstr(p, "row")) != NULL; p += 3) {
+            char before = (p == str) ? ' ' : *(p - 1);
+            char after = *(p + 3);
+            if (!isalnum(before) && before != '_' && !isalnum(after) && after != '_')
+                count_row++;
+        }
+        if (count_row > 0) {
+            str = realloc(str, total_length + count_row + 1);
+            for (char *p = str; (p = strstr(p, "row")) != NULL; ) {
+                char before = (p == str) ? ' ' : *(p - 1);
+                char after = *(p + 3);
+                if (!isalnum(before) && before != '_' && !isalnum(after) && after != '_') {
+                    memmove(p + 4, p + 3, strlen(p + 3) + 1);
+                    memcpy(p, "_row", 4);
+                    total_length++;
+                    p += 4;
+                } else {
+                    p += 3;
+                }
+            }
+        }
+    }
+
     load_shader(shader, str, total_length);
 
     free(str);
@@ -89,7 +116,7 @@ void glShaderSource_soloader(GLuint shader, GLsizei count, const GLchar **string
 
 void glCompileShader_soloader(GLuint shader) {
 #ifdef DEBUG_OPENGL
-    sceClibPrintf("[gl_dbg] glCompileShader<%p>(shader: %i)\n", __builtin_return_address(0), shader);
+    l_debug("[gl_dbg] glCompileShader<%p>(shader: %i)\n", __builtin_return_address(0), shader);
 #endif
 
 #ifndef USE_GXP_SHADERS
