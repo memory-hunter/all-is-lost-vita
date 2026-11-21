@@ -73,10 +73,10 @@ if (CMAKE_BUILD_TYPE STREQUAL "Debug")
   #add_definitions(-DDEBUG_PIPEFD=1)
   #add_definitions(-DDEBUG_CALLBACKS=1)
   # Space-separated flags passed to vitaGL
-  set(VITAGL_MAKE_FLAGS "SOFTFP_ABI=1 TEST=1 LOG_ERRORS=1 HAVE_SHADER_CACHE=1 HAVE_DEBUGGER=1")
+  set(VITAGL_MAKE_FLAGS "TEST=1 LOG_ERRORS=1 HAVE_SHADER_CACHE=1 HAVE_DEBUGGER=1")
 else()
   # Space-separated flags passed to vitaGL
-  set(VITAGL_MAKE_FLAGS "SOFTFP_ABI=1 NO_DEBUG=1 HAVE_SHADER_CACHE=1")
+  set(VITAGL_MAKE_FLAGS "NO_DEBUG=1 HAVE_SHADER_CACHE=1")
 endif()
 
 # makes sincos, sincosf, etc. visible
