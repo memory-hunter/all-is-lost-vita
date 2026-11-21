@@ -45,6 +45,24 @@ void gl_swap() {
     vglSwapBuffers(GL_FALSE);
 }
 
+void glDeleteBuffers_soloader(GLsizei count, const GLuint *buffers) {
+    if (count <= 0) {
+        glDeleteBuffers(count, buffers);
+        return;
+    }
+
+    for (GLsizei i = 0; i < count; ++i) {
+        if (!buffers[i])
+            continue;
+
+        GLsizei previous = 0;
+        while (previous < i && buffers[previous] != buffers[i])
+            ++previous;
+        if (previous == i)
+            glDeleteBuffers(1, &buffers[i]);
+    }
+}
+
 void glShaderSource_soloader(GLuint shader, GLsizei count, const GLchar **string, const GLint *_length) {
 #ifdef DEBUG_OPENGL
     l_debug("[gl_dbg] glShaderSource<%p>(shader: %i, count: %i, string: %p, length: %p)\n",
@@ -94,7 +112,7 @@ void glShaderSource_soloader(GLuint shader, GLsizei count, const GLchar **string
         }
         if (count_row > 0) {
             str = realloc(str, total_length + count_row + 1);
-            for (char *p = str; (p = strstr(p, "row")) != NULL; ) {
+            for (char *p = str; (p = strstr(p, "row")) != NULL;) {
                 char before = (p == str) ? ' ' : *(p - 1);
                 char after = *(p + 3);
                 if (!isalnum(before) && before != '_' && !isalnum(after) && after != '_') {
