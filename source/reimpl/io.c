@@ -30,6 +30,10 @@
 // void stat_newlib_to_bionic(struct stat * src, stat64_bionic * dst);
 #include "reimpl/bits/_struct_converters.c"
 
+void rewind_soloader(FILE *f) {
+    sceLibcBridge_fseek(f, 0, SEEK_SET);
+}
+
 FILE *fopen_soloader(const char *filename, const char *mode) {
     if (strcmp(filename, "/proc/cpuinfo") == 0) {
         return fopen_soloader("app0:/cpuinfo", mode);
