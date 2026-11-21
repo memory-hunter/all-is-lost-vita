@@ -37,6 +37,9 @@ int sceLibcHeapSize = 4 * 1024 * 1024;
 
 so_module so_mod;
 
+void fndk_log(int severity, const char *message) {
+}
+
 int main() {
     soloader_init_all();
 
