@@ -63,10 +63,32 @@ void glDeleteBuffers_soloader(GLsizei count, const GLuint *buffers) {
     }
 }
 
+void glGetActiveUniform_soloader(GLuint prog, GLuint idx, GLsizei bufSize, GLsizei *length, GLint *size, GLenum *type, GLchar *name) {
+    GLsizei len = 0;
+    GLint sz = 0;
+    GLenum ty = 0;
+    glGetActiveUniform(prog, idx, bufSize, &len, &sz, &ty, name);
+
+    if (bufSize > len + 3 &&
+        (!strcmp(name, "lightColors") || !strcmp(name, "lightParams") ||
+         !strcmp(name, "shadowMapProjection1Vectors") ||
+         !strcmp(name, "shadowMapProjection2Vectors"))) {
+        strcpy(name + len, "[0]");
+        len += 3;
+    }
+
+    if (length)
+        *length = len;
+    if (size)
+        *size = sz;
+    if (type)
+        *type = ty;
+}
+
 void glShaderSource_soloader(GLuint shader, GLsizei count, const GLchar **string, const GLint *_length) {
 #ifdef DEBUG_OPENGL
     l_debug("[gl_dbg] glShaderSource<%p>(shader: %i, count: %i, string: %p, length: %p)\n",
-                  __builtin_return_address(0), shader, count, string, _length);
+            __builtin_return_address(0), shader, count, string, _length);
 #endif
     if (!string) {
         l_error("<%p> Shader source string is NULL, count: %i", __builtin_return_address(0), count);

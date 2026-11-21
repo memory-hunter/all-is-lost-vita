@@ -33,6 +33,8 @@ void glShaderSource_soloader(GLuint shader, GLsizei count, const GLchar **string
 
 void glDeleteBuffers_soloader(GLsizei count, const GLuint *buffers);
 
+void glGetActiveUniform_soloader(GLuint prog, GLuint idx, GLsizei bufSize, GLsizei *length, GLint *size, GLenum *type, GLchar *name);
+
 #ifdef __cplusplus
 };
 #endif

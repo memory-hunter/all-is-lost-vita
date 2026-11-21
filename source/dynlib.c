@@ -750,7 +750,7 @@ so_default_dynlib default_dynlib[] = {
     { "glGenRenderbuffersOES", (uintptr_t)&glGenRenderbuffers },
     { "glGenTextures", (uintptr_t)&glGenTextures },
     { "glGetActiveAttrib", (uintptr_t)&glGetActiveAttrib },
-    { "glGetActiveUniform", (uintptr_t)&glGetActiveUniform },
+    { "glGetActiveUniform", (uintptr_t)&glGetActiveUniform_soloader },
     { "glGetAttribLocation", (uintptr_t)&glGetAttribLocation },
     { "glGetBooleanv", (uintptr_t)&glGetBooleanv },
     { "glGetBufferParameteriv", (uintptr_t)&glGetBufferParameteriv },
