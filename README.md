@@ -18,7 +18,7 @@ Space Stations across the galaxy are on the brink of destruction, and its up to 
 
 Control ship systems and direct crew members to safety in a game that will test your reflexes to the limit! 
 
-This repository contains a loader of **the Android release of Arcaea**, based
+This repository contains a loader of **the Android release of All is Lost**, based
 on the [Android SO Loader by TheFloW](https://github.com/TheOfficialFloW/gtasa_vita).
 The loader provides a tailored, minimalistic Android-like environment to run
 the official ARMv7 game executables on the PS Vita.
